@@ -73,7 +73,7 @@ class App extends Component {
         password: authData.password,
       },
     };
-    fetch(`http://localhost:8080/graphql`, {
+    fetch(`https://blog-restapi-nodejs.herokuapp.com/graphql`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(graphqlQuery),
@@ -136,7 +136,7 @@ class App extends Component {
         password: authData.signupForm.password.value,
       },
     };
-    fetch(`http://localhost:8080/graphql`, {
+    fetch(`https://blog-restapi-nodejs.herokuapp.com/graphql`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(graphqlQuery),
