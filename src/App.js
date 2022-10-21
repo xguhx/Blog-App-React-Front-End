@@ -90,7 +90,7 @@ class App extends Component {
 
         if (resData.errors) {
           console.log(resData.errors);
-          throw new Error("User login failed!");
+          throw new Error(`User login failed: ${resData.errors[0].message}`);
         }
         console.log(resData);
         this.setState({
@@ -152,12 +152,12 @@ class App extends Component {
         }
 
         if (resData.errors) {
-          console.log(resData);
           console.log(resData.errors);
-          throw new Error("User creation failed!");
+          throw new Error(
+            `User creation failed: ${resData.errors[0].message} `
+          );
         }
 
-        console.log(resData);
         this.setState({ isAuth: false, authLoading: false });
         this.props.history.replace("/");
       })

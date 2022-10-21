@@ -52,7 +52,9 @@ class Feed extends Component {
       .then((resData) => {
         if (resData.errors) {
           console.log(resData.errors);
-          throw new Error("Fetching status failed!");
+          throw new Error(
+            `Fetching status failed : ${resData.errors[0].message}`
+          );
         }
 
         this.setState({ status: resData.data.getUserStatus.status });
@@ -114,7 +116,9 @@ class Feed extends Component {
       .then((resData) => {
         if (resData.errors) {
           console.log(resData.errors);
-          throw new Error("Fetching posts failed!");
+          throw new Error(
+            `Fetching posts failed: ${resData.errors[0].message}`
+          );
         }
 
         this.setState({
@@ -163,7 +167,9 @@ class Feed extends Component {
         alert("Status Updated!");
         if (resData.errors) {
           console.log(resData.errors);
-          throw new Error("Fetching posts failed!");
+          throw new Error(
+            `Fetching posts failed: ${resData.errors[0].message}`
+          );
         }
       })
       .catch(this.catchError);
@@ -280,12 +286,14 @@ class Feed extends Component {
       })
       .then((resData) => {
         if (resData.errors && resData.errors[0].status === 422) {
-          throw new Error("Creating or editing a post failed!");
+          throw new Error(
+            `Creating or editing a post failed: ${resData.errors[0].message}`
+          );
         }
 
         if (resData.errors) {
           console.log(resData.errors);
-          throw new Error("Creating post Failed");
+          throw new Error(`Creating post failed: ${resData.errors[0].message}`);
         }
 
         const mutationType = this.state.editPost ? "updatePost" : "createPost";
@@ -364,7 +372,7 @@ class Feed extends Component {
       .then((resData) => {
         if (resData.errors) {
           console.log(resData.errors);
-          throw new Error("Creating post Failed");
+          throw new Error(`Creating post failed: ${resData.errors[0].message}`);
         }
 
         this.loadPosts();
