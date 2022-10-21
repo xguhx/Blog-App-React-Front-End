@@ -62,7 +62,7 @@ class App extends Component {
     const graphqlQuery = {
       query: `
       query ValidateLogin ($email: String!, $password: String!){
-         login (email: $email, password: $password) {
+         login(email: $email, password: $password) {
           token
           userId
         }
@@ -73,7 +73,7 @@ class App extends Component {
         password: authData.password,
       },
     };
-    fetch(`https://blog-restapi-nodejs.herokuapp.com/graphql`, {
+    fetch(`${process.env.REACT_APP_API}/graphql`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(graphqlQuery),
@@ -124,7 +124,7 @@ class App extends Component {
     const graphqlQuery = {
       query: `
       mutation SignUp ($email: String!, $name: String!, $password: String!) {
-        createUser (userInput: email: "$email", name: $name , password: $password}) {
+        createUser(userInput: {email: $email, name: $name , password: $password}) {
           _id
           email
         }
@@ -136,7 +136,7 @@ class App extends Component {
         password: authData.signupForm.password.value,
       },
     };
-    fetch(`https://blog-restapi-nodejs.herokuapp.com/graphql`, {
+    fetch(`${process.env.REACT_APP_API}/graphql`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(graphqlQuery),
@@ -152,6 +152,8 @@ class App extends Component {
         }
 
         if (resData.errors) {
+          console.log(resData);
+          console.log(resData.errors);
           throw new Error("User creation failed!");
         }
 

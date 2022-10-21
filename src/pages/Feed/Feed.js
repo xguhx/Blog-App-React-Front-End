@@ -19,9 +19,11 @@ class Feed extends Component {
     postPage: 1,
     postsLoading: true,
     editLoading: false,
+    _isMounted: false,
   };
 
   componentDidMount() {
+    this._isMounted = true;
     const graphqlQuery = {
       query: `
         query FetchStatus ($userId: ID!) {
@@ -36,7 +38,7 @@ class Feed extends Component {
       },
     };
 
-    fetch(`https://blog-restapi-nodejs.herokuapp.com/graphql`, {
+    fetch(`${process.env.REACT_APP_API}/graphql`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${this.props.token}`,
@@ -48,7 +50,6 @@ class Feed extends Component {
         return res.json();
       })
       .then((resData) => {
-        console.log(resData);
         if (resData.errors) {
           console.log(resData.errors);
           throw new Error("Fetching status failed!");
@@ -86,6 +87,7 @@ class Feed extends Component {
               imageUrl
               creator {
                 name
+                _id
               }
               createdAt
             }
@@ -98,7 +100,7 @@ class Feed extends Component {
       },
     };
 
-    fetch(`https://blog-restapi-nodejs.herokuapp.com/graphql`, {
+    fetch(`${process.env.REACT_APP_API}/graphql`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${this.props.token}`,
@@ -134,8 +136,8 @@ class Feed extends Component {
 
     const graphqlQuery = {
       query: `
-        mutation editUserStatus ($userId: ID!, $userInput: String){
-          editUserStatus(userId: $userId, userInput: "$userInput") {
+        mutation editUserStatus ($userId: ID!, $userInput: String!){
+          editUserStatus(userId: $userId, userInput: $userInput) {
            status
           
         }
@@ -146,7 +148,7 @@ class Feed extends Component {
         userInput: this.state.status,
       },
     };
-    fetch(`https://blog-restapi-nodejs.herokuapp.com/graphql`, {
+    fetch(`${process.env.REACT_APP_API}/graphql`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${this.props.token}`,
@@ -158,8 +160,7 @@ class Feed extends Component {
         return res.json();
       })
       .then((resData) => {
-        console.log(resData);
-
+        alert("Status Updated!");
         if (resData.errors) {
           console.log(resData.errors);
           throw new Error("Fetching posts failed!");
@@ -198,7 +199,7 @@ class Feed extends Component {
       formData.append("oldPath", this.state.editPost.ImagePath);
     }
 
-    fetch("https://blog-restapi-nodejs.herokuapp.com/post-image", {
+    fetch(`${process.env.REACT_APP_API}/post-image`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${this.props.token}`,
@@ -222,6 +223,7 @@ class Feed extends Component {
                 imageUrl
                 creator {
                   name
+                  _id
                 }
                 createdAt
               }
@@ -249,6 +251,7 @@ class Feed extends Component {
                 imageUrl
                 creator {
                   name
+                  _id
                 }
                 createdAt
               }
@@ -263,7 +266,7 @@ class Feed extends Component {
           };
         }
 
-        return fetch(`https://blog-restapi-nodejs.herokuapp.com/graphql`, {
+        return fetch(`${process.env.REACT_APP_API}/graphql`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${this.props.token}`,
@@ -294,6 +297,7 @@ class Feed extends Component {
           creator: resData.data[mutationType].creator,
           createdAt: resData.data[mutationType].createdAt,
           imagePath: resData.data[mutationType].imageUrl,
+          authorId: resData.data[mutationType].creator._id,
         };
 
         this.setState((prevState) => {
@@ -346,7 +350,7 @@ class Feed extends Component {
       },
     };
 
-    fetch(`https://blog-restapi-nodejs.herokuapp.com/graphql`, {
+    fetch(`${process.env.REACT_APP_API}/graphql`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${this.props.token}`,
@@ -363,7 +367,6 @@ class Feed extends Component {
           throw new Error("Creating post Failed");
         }
 
-        console.log(resData);
         this.loadPosts();
         // this.setState((prevState) => {
         //   const updatedPosts = prevState.posts.filter((p) => p._id !== postId);
@@ -435,6 +438,8 @@ class Feed extends Component {
                   key={post._id}
                   id={post._id}
                   author={post.creator.name}
+                  authorId={post.creator._id}
+                  userId={this.props.userId}
                   date={new Date(post.createdAt).toLocaleDateString("en-US")}
                   title={post.title}
                   image={post.imageUrl}

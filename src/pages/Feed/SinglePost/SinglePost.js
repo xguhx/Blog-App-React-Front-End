@@ -33,7 +33,7 @@ class SinglePost extends Component {
         postId: postId,
       },
     };
-    fetch(`https://blog-restapi-nodejs.herokuapp.com/graphql`, {
+    fetch(`${process.env.REACT_APP_API}/graphql`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${this.props.token}`,
@@ -45,7 +45,6 @@ class SinglePost extends Component {
         return res.json();
       })
       .then((resData) => {
-        console.log(resData);
         if (resData.errors) {
           console.log(resData.errors);
           throw new Error("Fetching posts failed!");
@@ -53,7 +52,7 @@ class SinglePost extends Component {
         this.setState({
           title: resData.data.post.title,
           author: resData.data.post.creator.name,
-          image: `https://blog-restapi-nodejs.herokuapp.com/${resData.data.post.imageUrl}`,
+          image: `${process.env.REACT_APP_API}/${resData.data.post.imageUrl}`,
           date: new Date(resData.data.post.createdAt).toLocaleDateString(
             "en-US"
           ),
